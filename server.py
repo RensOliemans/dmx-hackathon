@@ -2,10 +2,13 @@ from flask import Flask
 from flask import request, jsonify
 import pytweening
 from numpy import linspace
-# from controller import set_led
+from controller import DMX_controller
 from config import FPS
 import time
 app = Flask(__name__)
+
+c = DMX_controller(32, 50)
+c.set_channel(1, 100)
 
 
 def clamp(n, minn, maxn):
@@ -41,7 +44,9 @@ current_color = Color(0, 0, 0)
 
 
 def set_led(r, g, b):
-    print(r, g, b)
+    c.send_start(0, [r, g, b, 0, 0, 0])
+    c.make_frame()
+    c.make_frame()
 
 
 def generate_animation(f, t, duration, ease):
