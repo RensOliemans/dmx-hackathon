@@ -54,8 +54,7 @@ class DMX_controller:
         self.frame[channel-1] = value  # -1 because dmx starts at channel 1
 
     def make_frame(self):
-        print(self.__frame_string)
-        print(ep.write(self.__frame_string))
+        ep.write(self.__frame_string)
 
     def send_start(self, skip, data_array):
         self.__frame_string = (4).to_bytes(1, byteorder='big')
