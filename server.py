@@ -1,9 +1,11 @@
 from flask import Flask
 from flask import request
+from controller import set_led
 app = Flask(__name__)
 
 
 @app.route('/animate', methods=['POST'])
 def animate():
-    print(request.get_json()[0]['to'])
+    color = request.get_json()
+    set_led(color['r'], color['g'], color['b'])
     return 'kek'

@@ -39,5 +39,9 @@ ep = usb.util.find_descriptor(
 assert ep is not None
 
 # write the data
-ep.write(codecs.decode("04010000ff000000", "hex"))
+#ep.write(codecs.decode("0401ff0000000000", "hex"))
 
+def set_led(red, green, blue):
+    tmp = ""
+    tmp = red+green+blue
+    ep.write(codecs.decode("0401"+tmp+"000000","hex"))
