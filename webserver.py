@@ -3,7 +3,7 @@ from flask import request, jsonify
 
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
 from controller import DMXController
-from webserver_handler import ControllerHandler
+from controller_handler import ControllerHandler
 
 app = Flask(__name__)
 c = DMXController(CHANNELS, UPDATE_RATE_MS)
