@@ -13,7 +13,7 @@ def clamp(n, minn, maxn):
 
 class ControllerHandler:
     """
-    Handler function; used by the webserver, contains bits of controller functionality
+    Handler class; used by the webserver, contains bits of controller functionality
     """
 
     def __init__(self, controller, current_color=Color(0, 0, 0)):
