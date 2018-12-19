@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request, jsonify
 
 import log
+from Exceptions.InvalidRequestException import InvalidRequestException
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
 from controller import DMXController
 from controller_handler import ControllerHandler
@@ -16,7 +17,14 @@ HANDLER = ControllerHandler(c)
 
 @app.route('/animate', methods=['POST'])
 def animate():
-    logging.INFO("Got request {req} on route {route}".format(req=request, route=request.url_rule))
     data = request.get_json()
     animation = HANDLER.animate(data)
     return jsonify([str(color) for color in animation])
+
+
+@app.errorhandler(InvalidRequestException)
+def handle_invalid_request(error):
+    """ Returns a neat response to an error. """
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response

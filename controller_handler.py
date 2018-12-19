@@ -4,6 +4,7 @@ import pytweening
 from numpy import linspace
 
 import log
+from Exceptions.InvalidRequestException import InvalidRequestException
 from config import FPS
 from color import Color
 
@@ -29,13 +30,21 @@ class ControllerHandler:
         :param request_json: data which is gathered from the request
         :return: list of colors in the animation
         """
-        logging.DEBUG("Got request with data {req_json}".format(req_json=request_json))
-        color = request_json['color']
-        r, g, b = color['r'], color['g'], color['b']
+        logging.debug("Got request with data {req_json}".format(req_json=request_json))
+        try:
+            color = request_json['color']
+            r, g, b = color['r'], color['g'], color['b']
+            duration = request_json['duration']
+            ease = request_json['ease']
+        except (TypeError, KeyError):
+            logging.error("Request was incorrectly formatted. Was {req_json}".format(req_json=request_json))
+            raise InvalidRequestException('request should be json with '
+                                          '{{"color": {{"r": x, "g", y, "b": z}}, "duration": a, "ease": "something"}},'
+                                          ' was: {req_json}'.format(req_json=request_json))
 
         animation = self.generate_animation(self.current_color, Color(r, g, b),
-                                            request_json['duration'], request_json['ease'])
-        logging.DEBUG("Generated animation: {anim}".format(anim=animation))
+                                            duration, ease)
+        logging.debug("Generated animation: {anim}".format(anim=animation))
 
         self.play_animation(animation)
 
@@ -49,9 +58,12 @@ class ControllerHandler:
             time.sleep(1 / FPS)
 
     def set_led(self, r, g, b):
-        self.controller.send_start(0, [r, g, b, 0, 0, 0])
-        self.controller.make_frame()
-        self.controller.make_frame()
+        try:
+            self.controller.send_start(0, [r, g, b, 0, 0, 0])
+            self.controller.make_frame()
+            self.controller.make_frame()
+        except:
+            pass
 
     @staticmethod
     def generate_animation(start_color, final_color, duration, ease):
@@ -65,7 +77,13 @@ class ControllerHandler:
         :return: list of colors in the animation
         """
         diff = final_color - start_color
-        tween = getattr(pytweening, ease)
+        try:
+            tween = getattr(pytweening, ease)
+        except (TypeError, AttributeError):
+            logging.error("PyTweening couldn't understand the 'ease' function")
+            # The 'ease' wasn't a string, or wasn't understood by PyTweening
+            raise InvalidRequestException('"ease" was not a valid PyTweening ease')
+
         # Get list of colors in the animation
         animation = [start_color + diff * tween(step)
                      for step in linspace(0, 1, int(FPS * duration / 1000))]
