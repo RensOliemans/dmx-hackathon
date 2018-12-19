@@ -1,5 +1,6 @@
 import usb
-import codecs
+# import codecs
+import sys
 
 
 # find our device
@@ -36,10 +37,10 @@ ep = usb.util.find_descriptor(
 assert ep is not None
 
 # write the data
-#ep.write(codecs.decode("040100000000000102ffffff00000000", "hex"))
+# ep.write(codecs.decode("040100000000000102ffffff00000000", "hex"))
 
 
-class DMX_controller:
+class DMXController:
     __frame_string = ""
 
     def __init__(self, channels, update_rate_ms):
