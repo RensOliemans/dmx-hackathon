@@ -1,16 +1,15 @@
 from flask import Flask
 from flask import request, jsonify
 
+from config import UPDATE_RATE_MS, CHANNELS
 from controller import DMXController
-from color import Color
 from webserver_handler import ControllerHandler
 
 app = Flask(__name__)
-c = DMXController(32, 50)
+c = DMXController(CHANNELS, UPDATE_RATE_MS)
 c.set_channel(1, 100)
 
-CURRENT_COLOR = Color(0, 0, 0)
-HANDLER = ControllerHandler(c, current_color=CURRENT_COLOR)
+HANDLER = ControllerHandler(c)
 
 
 @app.route('/animate', methods=['POST'])

@@ -4,7 +4,7 @@ import pytweening
 from numpy import linspace
 
 from config import FPS
-from webserver import Color
+from color import Color
 
 
 def generate_animation(start_color, final_color, duration, ease):
@@ -30,6 +30,9 @@ def clamp(n, minn, maxn):
 
 
 class ControllerHandler:
+    """
+    Handler function; used by the webserver, contains bits of controller functionality
+    """
     def __init__(self, controller, current_color=Color(0, 0, 0)):
         self.controller = controller
         self.current_color = current_color
