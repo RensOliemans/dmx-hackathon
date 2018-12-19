@@ -1,13 +1,13 @@
 from flask import Flask
 from flask import request, jsonify
 
-from config import UPDATE_RATE_MS, CHANNELS
+from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
 from controller import DMXController
 from webserver_handler import ControllerHandler
 
 app = Flask(__name__)
 c = DMXController(CHANNELS, UPDATE_RATE_MS)
-c.set_channel(1, 100)
+c.set_channel(INIT_CHANNEL, INIT_CHANNEL_VALUE)
 
 HANDLER = ControllerHandler(c)
 
