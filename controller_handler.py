@@ -3,8 +3,11 @@ import time
 import pytweening
 from numpy import linspace
 
+import log
 from config import FPS
 from color import Color
+
+logging = log.get_logger(__name__)
 
 
 def clamp(n, minn, maxn):
@@ -26,11 +29,14 @@ class ControllerHandler:
         :param request_json: data which is gathered from the request
         :return: list of colors in the animation
         """
+        logging.DEBUG("Got request with data {req_json}".format(req_json=request_json))
         color = request_json['color']
         r, g, b = color['r'], color['g'], color['b']
 
         animation = self.generate_animation(self.current_color, Color(r, g, b),
                                             request_json['duration'], request_json['ease'])
+        logging.DEBUG("Generated animation: {anim}".format(anim=animation))
+
         self.play_animation(animation)
 
         # Last color of the animation is the 'final' color, so the current color of the controller
