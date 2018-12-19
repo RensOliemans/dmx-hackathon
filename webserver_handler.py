@@ -7,14 +7,21 @@ from config import FPS
 from webserver import Color
 
 
-def generate_animation(f, t, duration, ease):
-    animation = []
-    diff = t - f
+def generate_animation(start_color, final_color, duration, ease):
+    """
+    Generates an animation for the controller.
+
+    :param start_color: color before the animation
+    :param final_color: supposed color after the animation
+    :param duration: duration of the animation
+    :param ease: the easing function to use
+    :return: list of colors in the animation
+    """
+    diff = final_color - start_color
     tween = getattr(pytweening, ease)
-    for step in linspace(0, 1, int(FPS * duration / 1000)):
-        s = tween(step)
-        color = f + diff * s
-        animation.append(color)
+    # Get list of colors in the animation
+    animation = [start_color + diff * tween(step)
+                 for step in linspace(0, 1, int(FPS * duration / 1000))]
     return animation
 
 
