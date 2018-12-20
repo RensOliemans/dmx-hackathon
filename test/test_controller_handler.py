@@ -14,7 +14,9 @@ final_color = Color(193, 109, 120)
 default_duration = 300
 default_ease = 'linear'
 default_json = {'color': '#C9751C', 'duration': '15', 'ease': 'linear'}
-
+default_animation = [Color(r=201, g=117, b=128), Color(r=200, g=116, b=127), Color(r=199, g=115, b=126),
+                     Color(r=198, g=114, b=125), Color(r=197, g=113, b=124), Color(r=196, g=112, b=123),
+                     Color(r=195, g=111, b=122), Color(r=194, g=110, b=121), Color(r=193, g=109, b=120)]
 
 
 def get_controller_mock():
@@ -460,9 +462,8 @@ def test_animate_wrong_ease_text():
 def test_animate_calls_generate():
     # Arrange
     handler, _ = get_handler()
-    animation = handler.generate_animation(start_color, final_color, default_duration, default_ease)
 
-    handler.generate_animation = Mock(return_value=animation)
+    handler.generate_animation = Mock(return_value=default_animation)
 
     # Act
     handler.animate(default_json)
@@ -474,9 +475,8 @@ def test_animate_calls_generate():
 def test_animate_calls_play():
     # Arrange
     handler, _ = get_handler()
-    animation = handler.generate_animation(start_color, final_color, default_duration, default_ease)
 
-    handler.generate_animation = Mock(return_value=animation)
+    handler.generate_animation = Mock(return_value=default_animation)
     handler.play_animation = Mock()
 
     # Act
@@ -486,17 +486,14 @@ def test_animate_calls_play():
     handler.play_animation.assert_called_once()
 
 
-def test_animate_calls_current_color_set():
+def test_animate_current_color_set():
     # Arrange
     handler, _ = get_handler()
-    animation = handler.generate_animation(start_color, final_color, default_duration, default_ease)
-
-
-    handler.generate_animation = Mock(return_value=animation)
+    handler.generate_animation = Mock(return_value=default_animation)
     handler.play_animation = Mock()
 
     # Act
     handler.animate(default_json)
 
     # Assert
-    handler.play_animation.assert_called_once()
+    assert handler.current_color == default_animation[-1]
