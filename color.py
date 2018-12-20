@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 
 
-
-
-
 @dataclass
 class Color:
     r: int = 0

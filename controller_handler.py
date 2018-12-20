@@ -35,7 +35,7 @@ class ControllerHandler:
             color = Color.to_rgb(request_json['color'])
             duration = int(request_json['duration'])
             ease = request_json['ease']
-        except (TypeError, KeyError, ValueError) as e:
+        except (TypeError, KeyError, ValueError, AttributeError) as e:
             logging.error("Request was incorrectly formatted. Was %s", request_json)
             raise InvalidRequestException('request should have the Color, Duration and Ease. It was:'
                                           '{req_json}'.format(req_json=request_json), inner_exception=e)
