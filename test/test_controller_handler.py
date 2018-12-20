@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import Mock
 
 import pytweening
 from numpy import linspace
@@ -17,11 +17,11 @@ default_ease = 'linear'
 
 def get_controller_mock():
     controller_mock = DMXController(1, 10)
-    controller_mock.make_frame = MagicMock()
-    controller_mock.send_start = MagicMock()
-    controller_mock.send_data = MagicMock()
-    controller_mock.send_data_skip = MagicMock()
-    controller_mock.send_single = MagicMock()
+    controller_mock.make_frame = Mock()
+    controller_mock.send_start = Mock()
+    controller_mock.send_data = Mock()
+    controller_mock.send_data_skip = Mock()
+    controller_mock.send_single = Mock()
     return controller_mock
 
 
@@ -138,7 +138,7 @@ def test_play_animation():
     """ play_animation should call handler.set_led as many times as there are animation frames. """
     # Arrange
     handler, _ = get_handler()
-    handler.set_led = MagicMock()
+    handler.set_led = Mock()
 
     # Act
     animation = handler.generate_animation(start_color, final_color, default_duration, default_ease)
@@ -168,7 +168,7 @@ def test_set_led_raise_correct_exception():
     # Arrange
     handler, controller = get_handler()
     r, g, b = start_color.r, start_color.g, start_color.b
-    controller.make_frame = MagicMock(side_effect=NameError('foo'))
+    controller.make_frame = Mock(side_effect=NameError('foo'))
     exception = None
 
     # Act
