@@ -35,6 +35,7 @@ class ControllerHandler:
             # convert hex to rgb
             color = request_json['color'].lstrip('#')
             r, g, b = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+
             duration = int(request_json['duration'])
             ease = request_json['ease']
         except (TypeError, KeyError):
