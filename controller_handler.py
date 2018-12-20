@@ -4,7 +4,7 @@ import pytweening
 from numpy import linspace
 
 import log
-from Exceptions.InvalidRequestException import InvalidRequestException
+from Exceptions.Exceptions import ControllerSetLEDException, InvalidRequestException
 from config import FPS
 from color import Color
 
@@ -34,14 +34,14 @@ class ControllerHandler:
         try:
             # convert hex to rgb
             color = request_json['color'].lstrip('#')
-            r, g, b = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+            r, g, b = tuple(int(color[i:i + 2], 16) for i in (0, 2, 4))
 
             duration = int(request_json['duration'])
             ease = request_json['ease']
-        except (TypeError, KeyError, ValueError):
+        except (TypeError, KeyError, ValueError) as e:
             logging.error("Request was incorrectly formatted. Was {req_json}".format(req_json=request_json))
             raise InvalidRequestException('request should have the Color, Duration and Ease. It was:'
-                                          '{req_json}'.format(req_json=request_json))
+                                          '{req_json}'.format(req_json=request_json), inner_exception=e)
 
         animation = self.generate_animation(self.current_color, Color(r, g, b),
                                             duration, ease)
@@ -61,11 +61,11 @@ class ControllerHandler:
     def set_led(self, r, g, b):
         try:
             self.controller.send_start(0, [r, g, b, 0, 0, 0])
-            self.controller.make_frame()
-            self.controller.make_frame()
-        except NameError:
+            # self.controller.make_frame()
+            # self.controller.make_frame()
+        except NameError as e:
             logging.error("Is the controller initialised correctly?")
-            raise
+            raise ControllerSetLEDException('Controller set LED went wrong', inner_exception=e)
 
     @staticmethod
     def generate_animation(start_color, final_color, duration, ease):
@@ -81,12 +81,14 @@ class ControllerHandler:
         diff = final_color - start_color
         try:
             tween = getattr(pytweening, ease)
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError) as e:
             logging.error("PyTweening couldn't understand the 'ease' function")
             # The 'ease' wasn't a string, or wasn't understood by PyTweening
-            raise InvalidRequestException('"ease" was not a valid PyTweening ease')
+            raise InvalidRequestException('"ease" was not a valid PyTweening ease', inner_exception=e)
 
         # Get list of colors in the animation
         animation = [start_color + diff * tween(step)
                      for step in linspace(0, 1, int(FPS * duration / 1000))]
+        # if duration was too short (no single step was made), convert immediately to final color
+        animation = animation or [final_color]
         return animation

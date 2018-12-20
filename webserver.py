@@ -3,7 +3,7 @@ from flask import request, jsonify
 from flask_bootstrap import Bootstrap
 
 import log
-from Exceptions.InvalidRequestException import InvalidRequestException
+from Exceptions.Exceptions import InvalidRequestException, ControllerSetLEDException
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
 from controller import DMXController
 from controller_handler import ControllerHandler
@@ -38,3 +38,8 @@ def handle_invalid_request(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+@app.errorhandler(ControllerSetLEDException)
+def handle_controller_set_led_exception(error):
+    return handle_invalid_request(error)
