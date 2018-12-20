@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect
 from flask import request, jsonify
 from flask_bootstrap import Bootstrap
+from werkzeug.exceptions import BadRequestKeyError
 
 import log
 from Exceptions.Exceptions import InvalidRequestException, ControllerSetLEDException
@@ -31,8 +32,11 @@ def animate():
 
 @app.route('/', methods=['GET'])
 def index():
-    color, duration, ease = (request.args[arg] for arg in ['color', 'duration', 'ease'])
-    return render_template('index.html', color=color, duration=duration, ease=ease)
+    possible_fields = ['color', 'duration', 'ease']
+    if all([arg in request.args for arg in possible_fields]):
+        color, duration, ease = (request.args[arg] for arg in possible_fields)
+        return render_template('index.html', color=color, duration=duration, ease=ease)
+    return render_template('index.html')
 
 
 @app.errorhandler(InvalidRequestException)
