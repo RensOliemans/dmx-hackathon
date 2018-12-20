@@ -32,9 +32,10 @@ class ControllerHandler:
         """
         logging.debug("Got request with data {req_json}".format(req_json=request_json))
         try:
-            color = request_json['color']
-            r, g, b = color['r'], color['g'], color['b']
-            duration = request_json['duration']
+            # convert hex to rgb
+            color = request_json['color'].lstrip('#')
+            r, g, b = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+            duration = int(request_json['duration'])
             ease = request_json['ease']
         except (TypeError, KeyError):
             logging.error("Request was incorrectly formatted. Was {req_json}".format(req_json=request_json))

@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask import request, jsonify
+from flask_bootstrap import Bootstrap
 
 import log
 from Exceptions.InvalidRequestException import InvalidRequestException
@@ -8,7 +9,10 @@ from controller import DMXController
 from controller_handler import ControllerHandler
 
 logging = log.get_logger(__name__)
+
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
+
 c = DMXController(CHANNELS, UPDATE_RATE_MS)
 c.set_channel(INIT_CHANNEL, INIT_CHANNEL_VALUE)
 
@@ -17,9 +21,15 @@ HANDLER = ControllerHandler(c)
 
 @app.route('/animate', methods=['POST'])
 def animate():
-    data = request.get_json()
+    # Convert to dict (we don't need the multi levels)
+    data = {x: request.form.get(x) for x in request.form}
     animation = HANDLER.animate(data)
     return jsonify([str(color) for color in animation])
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('index.html')
 
 
 @app.errorhandler(InvalidRequestException)
