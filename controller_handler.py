@@ -38,11 +38,10 @@ class ControllerHandler:
 
             duration = int(request_json['duration'])
             ease = request_json['ease']
-        except (TypeError, KeyError):
+        except (TypeError, KeyError, ValueError):
             logging.error("Request was incorrectly formatted. Was {req_json}".format(req_json=request_json))
-            raise InvalidRequestException('request should be json with '
-                                          '{{"color": {{"r": x, "g", y, "b": z}}, "duration": a, "ease": "something"}},'
-                                          ' was: {req_json}'.format(req_json=request_json))
+            raise InvalidRequestException('request should have the Color, Duration and Ease. It was:'
+                                          '{req_json}'.format(req_json=request_json))
 
         animation = self.generate_animation(self.current_color, Color(r, g, b),
                                             duration, ease)

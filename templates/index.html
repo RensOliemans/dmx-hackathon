@@ -3,16 +3,25 @@
 
 {% block content %}
   <h1>Hello</h1>
-    <div class="example-content well">
-        <div class="example-content-widget">
-            <form method="post" action="/animate">
-                <div class="form-group">
-                    <input type="color" name="color" class="form-control" id="color" placeholder="#8f3596">
-                    <input type="number" name="duration" class="form-control" id="duration" placeholder=10000>
-                    <input type="text" name="ease" class="form-control" id="ease" placeholder="linear">
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <form method="post" action="/animate">
+                    <div class="form-group">
+                        <label for="color">Color (Hex)</label>
+                        <input type="color" name="color" class="form-control" id="color" placeholder="#8f3596">
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Duration</label>
+                        <input type="number" name="duration" class="form-control" id="duration" placeholder=10000>
+                    </div>
+                    <div class="form-group">
+                        <label for="ease">Ease (see <a href="https://github.com/asweigart/pytweening">PyTweening</a>)</label>
+                        <input type="text" name="ease" class="form-control" id="ease" placeholder="linear">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
 
