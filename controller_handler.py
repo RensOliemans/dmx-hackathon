@@ -63,8 +63,9 @@ class ControllerHandler:
             self.controller.send_start(0, [r, g, b, 0, 0, 0])
             self.controller.make_frame()
             self.controller.make_frame()
-        except:
-            pass
+        except NameError:
+            logging.error("Is the controller initialised correctly?")
+            raise
 
     @staticmethod
     def generate_animation(start_color, final_color, duration, ease):
