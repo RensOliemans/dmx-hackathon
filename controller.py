@@ -1,5 +1,5 @@
 import usb
-# import codecs
+import codecs
 import sys
 
 import log
