@@ -58,8 +58,8 @@ class ControllerHandler:
     def set_led(self, r, g, b):
         try:
             self.controller.send_start(0, [r, g, b, 0, 0, 0])
-            # self.controller.make_frame()
-            # self.controller.make_frame()
+            self.controller.make_frame()
+            self.controller.make_frame()
         except NameError as e:
             logging.error("Is the controller initialised correctly?")
             raise ControllerSetLEDException('Controller set LED went wrong', inner_exception=e)
