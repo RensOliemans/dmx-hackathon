@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from flask import request, jsonify
 from flask_bootstrap import Bootstrap
 
@@ -23,13 +23,16 @@ HANDLER = ControllerHandler(c)
 def animate():
     # Convert to dict (we don't need the multi levels)
     data = {x: request.form.get(x) for x in request.form}
-    animation = HANDLER.animate(data)
-    return jsonify([str(color) for color in animation])
+    current_color, duration, ease = HANDLER.animate(data)
+    return redirect("/?color={0}&duration={1}&ease={2}"
+                    .format(current_color.to_hex().lstrip('#'), duration, ease),
+                    code=302)
 
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    color, duration, ease = (request.args[arg] for arg in ['color', 'duration', 'ease'])
+    return render_template('index.html', color=color, duration=duration, ease=ease)
 
 
 @app.errorhandler(InvalidRequestException)
@@ -42,5 +45,5 @@ def handle_invalid_request(error):
 
 @app.errorhandler(ControllerSetLEDException)
 def handle_controller_set_led_exception(error):
-    """ Calls handle_invalid_request, as the same functionality is needed. """
+    """ Calls handle_invalid_request, as the same functionality is required. """
     return handle_invalid_request(error)

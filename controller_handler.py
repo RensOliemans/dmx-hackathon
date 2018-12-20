@@ -22,20 +22,17 @@ class ControllerHandler:
 
     def __init__(self, controller, current_color=Color(0, 0, 0)):
         self.controller = controller
-        self.current_color = current_color
+        self.current_color: Color = current_color
 
     def animate(self, request_json):
         """
         This method called when an animate request is done. It connects with the controller.
         :param request_json: data which is gathered from the request
-        :return: list of colors in the animation
+        :return: the final current_color, duration and ease
         """
         logging.debug("Got request with data %s", request_json)
         try:
-            # convert hex to rgb
-            color = request_json['color'].lstrip('#')
-            r, g, b = tuple(int(color[i:i + 2], 16) for i in (0, 2, 4))
-
+            color = Color.to_rgb(request_json['color'])
             duration = int(request_json['duration'])
             ease = request_json['ease']
         except (TypeError, KeyError, ValueError) as e:
@@ -43,7 +40,7 @@ class ControllerHandler:
             raise InvalidRequestException('request should have the Color, Duration and Ease. It was:'
                                           '{req_json}'.format(req_json=request_json), inner_exception=e)
 
-        animation = self.generate_animation(self.current_color, Color(r, g, b),
+        animation = self.generate_animation(self.current_color, color,
                                             duration, ease)
         logging.debug("Generated animation: %s", animation)
 
@@ -51,7 +48,7 @@ class ControllerHandler:
 
         # Last color of the animation is the 'final' color, so the current color of the controller
         self.current_color = animation[-1]
-        return animation
+        return self.current_color, duration, ease
 
     def play_animation(self, animation):
         for frame in animation:
