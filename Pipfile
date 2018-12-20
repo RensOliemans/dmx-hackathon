@@ -12,6 +12,7 @@ flask = "*"
 pyusb = "*"
 pytweening = "*"
 numpy = "*"
+flask-bootstrap = "*"
 
 [requires]
 python_version = "3.7"
