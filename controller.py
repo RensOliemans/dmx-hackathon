@@ -7,43 +7,43 @@ import log
 logging = log.get_logger(__name__)
 
 # find our device
-dev = usb.core.find(idVendor=0x10cf, idProduct=0x8062)
-
-# was it found?
-if dev is None:
-    logging.error('Device not found')
-    raise ValueError('Device not found')
-
-try:
-    if dev.is_kernel_driver_active(0) is True:
-        dev.detach_kernel_driver(0)
-except usb.core.USBError as e:
-    logging.error("Kernel driver won't give up control over device: %s", str(e))
-    sys.exit("Kernel driver won't give up control over device: %s" % str(e))
-
-try:
-    dev.set_configuration()
-    dev.reset()
-except usb.core.USBError as e:
-    logging.error("Cannot set configuration the device: %s", str(e))
-    sys.exit("Cannot set configuration the device: %s" % str(e))
-
-
-# get an endpoint instance
-cfg = dev.get_active_configuration()
-intf = cfg[(0, 0)]
-
-ep = usb.util.find_descriptor(
-    intf,
-    # match the first OUT endpoint
-    custom_match=lambda e: \
-    usb.util.endpoint_direction(e.bEndpointAddress) == \
-    usb.util.ENDPOINT_OUT)
-
-if ep is None:
-    logging.error("Something generic went wrong. Exiting program")
-    sys.exit(1)
-logging.debug("Controller set up correctly, ep: %s", ep)
+# dev = usb.core.find(idVendor=0x10cf, idProduct=0x8062)
+#
+# # was it found?
+# if dev is None:
+#     logging.error('Device not found')
+#     raise ValueError('Device not found')
+#
+# try:
+#     if dev.is_kernel_driver_active(0) is True:
+#         dev.detach_kernel_driver(0)
+# except usb.core.USBError as e:
+#     logging.error("Kernel driver won't give up control over device: %s", str(e))
+#     sys.exit("Kernel driver won't give up control over device: %s" % str(e))
+#
+# try:
+#     dev.set_configuration()
+#     dev.reset()
+# except usb.core.USBError as e:
+#     logging.error("Cannot set configuration the device: %s", str(e))
+#     sys.exit("Cannot set configuration the device: %s" % str(e))
+#
+#
+# # get an endpoint instance
+# cfg = dev.get_active_configuration()
+# intf = cfg[(0, 0)]
+#
+# ep = usb.util.find_descriptor(
+#     intf,
+#     # match the first OUT endpoint
+#     custom_match=lambda e: \
+#     usb.util.endpoint_direction(e.bEndpointAddress) == \
+#     usb.util.ENDPOINT_OUT)
+#
+# if ep is None:
+#     logging.error("Something generic went wrong. Exiting program")
+#     sys.exit(1)
+# logging.debug("Controller set up correctly, ep: %s", ep)
 
 # write the data
 # ep.write(codecs.decode("040100000000000102ffffff00000000", "hex"))

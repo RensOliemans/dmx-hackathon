@@ -86,6 +86,7 @@ class ControllerHandler:
         # Get list of colors in the animation
         animation = [start_color + diff * tween(step)
                      for step in linspace(0, 1, int(FPS * duration / 1000))]
-        # if duration was too short (no single step was made), convert immediately to final color
-        animation = animation or [final_color]
+        # if duration was too short (no single step was made), add final_color to animation
+        if final_color not in animation:
+            animation.append(final_color)
         return animation
