@@ -42,4 +42,5 @@ def handle_invalid_request(error):
 
 @app.errorhandler(ControllerSetLEDException)
 def handle_controller_set_led_exception(error):
+    """ Calls handle_invalid_request, as the same functionality is needed. """
     return handle_invalid_request(error)

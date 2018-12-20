@@ -43,7 +43,7 @@ ep = usb.util.find_descriptor(
 if ep is None:
     logging.error("Something generic went wrong. Exiting program")
     sys.exit(1)
-logging.debug("Controller set up correctly, ep: {ep}".format(ep=ep))
+logging.debug("Controller set up correctly, ep: %s", ep)
 
 # write the data
 # ep.write(codecs.decode("040100000000000102ffffff00000000", "hex"))

@@ -30,7 +30,7 @@ class ControllerHandler:
         :param request_json: data which is gathered from the request
         :return: list of colors in the animation
         """
-        logging.debug("Got request with data {req_json}".format(req_json=request_json))
+        logging.debug("Got request with data %s", request_json)
         try:
             # convert hex to rgb
             color = request_json['color'].lstrip('#')
@@ -39,13 +39,13 @@ class ControllerHandler:
             duration = int(request_json['duration'])
             ease = request_json['ease']
         except (TypeError, KeyError, ValueError) as e:
-            logging.error("Request was incorrectly formatted. Was {req_json}".format(req_json=request_json))
+            logging.error("Request was incorrectly formatted. Was %s", request_json)
             raise InvalidRequestException('request should have the Color, Duration and Ease. It was:'
                                           '{req_json}'.format(req_json=request_json), inner_exception=e)
 
         animation = self.generate_animation(self.current_color, Color(r, g, b),
                                             duration, ease)
-        logging.debug("Generated animation: {anim}".format(anim=animation))
+        logging.debug("Generated animation: %s", animation)
 
         self.play_animation(animation)
 
@@ -82,7 +82,7 @@ class ControllerHandler:
         try:
             tween = getattr(pytweening, ease)
         except (TypeError, AttributeError) as e:
-            logging.error("PyTweening couldn't understand the 'ease' function")
+            logging.error("PyTweening couldn't understand the 'ease' function. Passed ease: %s", ease)
             # The 'ease' wasn't a string, or wasn't understood by PyTweening
             raise InvalidRequestException('"ease" was not a valid PyTweening ease', inner_exception=e)
 
