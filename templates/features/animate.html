@@ -6,8 +6,8 @@
                 <div class="form-group">
                     <label for="color">Color (Hex)</label>
                     <input type="color" name="color" class="form-control" id="color" value=
-                        {% if color %}
-                           {{ "#" + color }}
+                        {% if color_animate %}
+                           {{ "#" + color_animate }}
                         {% else %}
                            "#c9751c"
                         {% endif %}>
@@ -15,8 +15,8 @@
                 <div class="form-group">
                     <label for="duration">Duration (ms)</label>
                     <input type="number" name="duration" class="form-control" id="duration" max="100000" value=
-                        {% if duration %}
-                           {{ duration }}
+                        {% if duration_animate %}
+                           {{ duration_animate }}
                         {% else %}
                            "1000"
                         {% endif %}>
@@ -24,8 +24,8 @@
                 <div class="form-group">
                     <label for="ease">Ease (see <a href="https://github.com/asweigart/pytweening">PyTweening</a>)</label>
                     <input type="text" name="ease" class="form-control" id="ease" value=
-                        {% if ease %}
-                            {{ ease }}
+                        {% if ease_animate %}
+                            {{ ease_animate }}
                         {% else %}
                             "linear"
                         {% endif %}>
