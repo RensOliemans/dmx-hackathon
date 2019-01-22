@@ -491,67 +491,7 @@ def test_onoff_setled_called():
     handler.set_led = Mock()
 
     # Act
-    handler.onoff(default_toggle_json)
+    handler.onoff()
 
     # Assert
     handler.set_led.assert_called_once()
-
-
-def test_onoff_currentcolor_set():
-    # Arrange
-    handler, _ = get_handler()
-    handler.set_led = Mock()
-
-    # Act
-    handler.onoff(default_toggle_json)
-
-    # Assert
-    assert handler.current_color == Color.to_rgb(default_toggle_json['color'])
-
-
-def test_onoff_wrong_request_type():
-    # Arrange
-    handler, _ = get_handler()
-    exception = None
-
-    # Act
-    try:
-        handler.onoff({'color': 'wrong'})
-    except InvalidRequestException as e:
-        exception = e
-
-    # Assert
-    assert exception is not None
-    assert type(exception.inner_exception) == ValueError
-
-
-def test_onoff_wrong_request_content():
-    # Arrange
-    handler, _ = get_handler()
-    exception = None
-
-    # Act
-    try:
-        handler.onoff({'wrong': '#C9751C'})
-    except InvalidRequestException as e:
-        exception = e
-
-    # Assert
-    assert exception is not None
-    assert type(exception.inner_exception) == KeyError
-
-
-def test_onoff_wrong_request_empty():
-    # Arrange
-    handler, _ = get_handler()
-    exception = None
-
-    # Act
-    try:
-        handler.onoff({'color': ''})
-    except InvalidRequestException as e:
-        exception = e
-
-    # Assert
-    assert exception is not None
-    assert type(exception.inner_exception) == ValueError
