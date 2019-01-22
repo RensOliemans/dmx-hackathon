@@ -2,14 +2,12 @@ from flask import Flask, render_template, redirect, session
 from flask import request, jsonify
 from flask_bootstrap import Bootstrap
 
-import log
 from Exceptions.Exceptions import InvalidRequestException, ControllerSetLEDException
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
 from controller import DMXController
 from controller_handler import ControllerHandler
 from secret import key as secret_key
-
-logging = log.get_logger(__name__)
+from log import logger
 
 app = Flask(__name__)
 app.secret_key = secret_key
@@ -51,7 +49,7 @@ def index():
                                                                                 if key in session else ""
                                                                                 for key in keys]
 
-    logging.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_onoff}, {status_onoff}")
+    logger.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_onoff}, {status_onoff}")
     return render_template('index.html', color_animate=color_animate, duration_animate=duration_animate,
                            ease_animate=ease_animate, color_onoff=color_onoff, status_onoff=status_onoff)
 

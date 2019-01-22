@@ -4,12 +4,10 @@ import random
 import pytweening
 from numpy import linspace
 
-import log
+from log import logger
 from Exceptions.Exceptions import ControllerSetLEDException, InvalidRequestException
 from config import FPS
 from color import Color
-
-logging = log.get_logger(__name__)
 
 
 def clamp(n, minn, maxn):
@@ -31,19 +29,19 @@ class ControllerHandler:
         :param request_json: data which is gathered from the request
         :return: the final current_color, duration and ease
         """
-        logging.debug("Got request with data %s", request_json)
+        logger.debug("Got request with data %s", request_json)
         try:
             color = Color.to_rgb(request_json['color'])
             duration = int(request_json['duration'])
             ease = request_json['ease']
         except (TypeError, KeyError, ValueError, AttributeError) as e:
-            logging.error("Request was incorrectly formatted. Was %s", request_json)
+            logger.error("Request was incorrectly formatted. Was %s", request_json)
             raise InvalidRequestException('request should have the Color, Duration and Ease. It was:'
                                           '{req_json}'.format(req_json=request_json), inner_exception=e)
 
         animation = self.generate_animation(self.current_color, color,
                                             duration, ease)
-        logging.debug("Generated animation: %s", animation)
+        logger.debug("Generated animation: %s", animation)
 
         self.play_animation(animation)
 
@@ -57,11 +55,11 @@ class ControllerHandler:
         :param request_json: data gathered from the request
         :return: Tuple: (current_color, status) with status being 1 or 0, after the switch has been done
         """
-        logging.debug(f"Got request with data {request_json}")
+        logger.debug(f"Got request with data {request_json}")
         try:
             color = Color.to_rgb(request_json['color'])
         except (KeyError, ValueError) as e:
-            logging.error(f"Request was incorrectly formatted. Was {request_json}")
+            logger.error(f"Request was incorrectly formatted. Was {request_json}")
             raise InvalidRequestException("Request should have the Color. It was:"
                                           f"{request_json}", inner_exception=e)
 
@@ -91,7 +89,7 @@ class ControllerHandler:
             self.controller.make_frame()
             self.controller.make_frame()
         except NameError as e:
-            logging.error("Is the controller initialised correctly?")
+            logger.error("Is the controller initialised correctly?")
             raise ControllerSetLEDException('Controller set LED went wrong', inner_exception=e)
 
     @staticmethod
@@ -109,7 +107,7 @@ class ControllerHandler:
         try:
             tween = getattr(pytweening, ease)
         except (TypeError, AttributeError) as e:
-            logging.error("PyTweening couldn't understand the 'ease' function. Passed ease: %s", ease)
+            logger.error("PyTweening couldn't understand the 'ease' function. Passed ease: %s", ease)
             # The 'ease' wasn't a string, or wasn't understood by PyTweening
             raise InvalidRequestException('"ease" was not a valid PyTweening ease', inner_exception=e)
 
