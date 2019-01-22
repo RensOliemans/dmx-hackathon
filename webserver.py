@@ -9,7 +9,7 @@ from controller_handler import ControllerHandler
 from secret import key as secret_key
 from log import logger
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.secret_key = secret_key
 bootstrap = Bootstrap(app)
 
@@ -67,4 +67,4 @@ def handle_controller_set_led_exception(error: ControllerSetLEDException):
 
 @app.errorhandler(404)
 def not_found(error):
-    return render_template('errors/404.html'), 404
+    return render_template('errors/new404.html'), 404
