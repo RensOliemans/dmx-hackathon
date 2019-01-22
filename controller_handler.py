@@ -1,14 +1,13 @@
 import time
+import random
 
 import pytweening
 from numpy import linspace
 
-import log
+from log import logger
 from Exceptions.Exceptions import ControllerSetLEDException, InvalidRequestException
 from config import FPS
 from color import Color
-
-logging = log.get_logger(__name__)
 
 
 def clamp(n, minn, maxn):
@@ -30,19 +29,19 @@ class ControllerHandler:
         :param request_json: data which is gathered from the request
         :return: the final current_color, duration and ease
         """
-        logging.debug("Got request with data %s", request_json)
+        logger.debug(f"Got request with data {request_json}")
         try:
             color = Color.to_rgb(request_json['color'])
             duration = int(request_json['duration'])
             ease = request_json['ease']
         except (TypeError, KeyError, ValueError, AttributeError) as e:
-            logging.error("Request was incorrectly formatted. Was %s", request_json)
+            logger.error(f"Request was incorrectly formatted. Was {request_json}")
             raise InvalidRequestException('request should have the Color, Duration and Ease. It was:'
                                           '{req_json}'.format(req_json=request_json), inner_exception=e)
 
         animation = self.generate_animation(self.current_color, color,
                                             duration, ease)
-        logging.debug("Generated animation: %s", animation)
+        logger.debug(f"Generated animation: {animation}" )
 
         self.play_animation(animation)
 
@@ -50,20 +49,11 @@ class ControllerHandler:
         self.current_color = animation[-1]
         return self.current_color, duration, ease
 
-    def onoff(self, request_json):
+    def onoff(self):
         """
         This method is called when the lights need to go on or off.
-        :param request_json: data gathered from the request
-        :return: Tuple: (current_color, status) with status being 1 or 0, after the switch has been done
+        :return: status being 1 or 0, after the switch has been done
         """
-        logging.debug(f"Got request with data {request_json}")
-        try:
-            color = Color.to_rgb(request_json['color'])
-        except (KeyError, ValueError) as e:
-            logging.error(f"Request was incorrectly formatted. Was {request_json}")
-            raise InvalidRequestException("Request should have the Color. It was:"
-                                          f"{request_json}", inner_exception=e)
-
         # TODO: implement when controller has functionality
         # status = self.controller.get_status()
         status = 0
@@ -72,11 +62,11 @@ class ControllerHandler:
             # self.controller.turn_off()
             pass
         else:
-            self.set_led(color.r, color.g, color.b)
+            self.set_led(self.current_color.r, self.current_color.g, self.current_color.b)
 
         # return color, self.controller.get_status()
-        self.current_color = color
-        return color, 1
+        status = random.choice((0, 1))
+        return 'On' if status else 'Off'
 
     def play_animation(self, animation):
         for frame in animation:
@@ -88,8 +78,8 @@ class ControllerHandler:
             self.controller.send_start(0, [r, g, b, 0, 0, 0])
             self.controller.make_frame()
             self.controller.make_frame()
-        except NameError as e:
-            logging.error("Is the controller initialised correctly?")
+        except (NameError, OverflowError) as e:
+            logger.error("Is the controller initialised correctly?")
             raise ControllerSetLEDException('Controller set LED went wrong', inner_exception=e)
 
     @staticmethod
@@ -107,7 +97,7 @@ class ControllerHandler:
         try:
             tween = getattr(pytweening, ease)
         except (TypeError, AttributeError) as e:
-            logging.error("PyTweening couldn't understand the 'ease' function. Passed ease: %s", ease)
+            logger.error(f"PyTweening couldn't understand the 'ease' function. Passed ease: {ease}")
             # The 'ease' wasn't a string, or wasn't understood by PyTweening
             raise InvalidRequestException('"ease" was not a valid PyTweening ease', inner_exception=e)
 

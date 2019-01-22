@@ -14,6 +14,7 @@ pytweening = "*"
 numpy = "*"
 flask-bootstrap = "*"
 pytest = "*"
+loguru = "*"
 
 [requires]
 python_version = "3.7"

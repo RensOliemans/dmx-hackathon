@@ -2,30 +2,28 @@ import usb
 import codecs
 import sys
 
-import log
-
-logging = log.get_logger(__name__)
+from log import logger
 
 # find our device
 dev = usb.core.find(idVendor=0x10cf, idProduct=0x8062)
 
 # was it found?
 if dev is None:
-    logging.error('Device not found')
+    logger.error('Device not found')
     raise ValueError('Device not found')
 
 try:
     if dev.is_kernel_driver_active(0) is True:
         dev.detach_kernel_driver(0)
 except usb.core.USBError as e:
-    logging.error("Kernel driver won't give up control over device: %s", str(e))
+    logger.error("Kernel driver won't give up control over device: %s", str(e))
     sys.exit("Kernel driver won't give up control over device: %s" % str(e))
 
 try:
     dev.set_configuration()
     dev.reset()
 except usb.core.USBError as e:
-    logging.error("Cannot set configuration the device: %s", str(e))
+    logger.error("Cannot set configuration the device: %s", str(e))
     sys.exit("Cannot set configuration the device: %s" % str(e))
 
 
@@ -41,9 +39,9 @@ ep = usb.util.find_descriptor(
     usb.util.ENDPOINT_OUT)
 
 if ep is None:
-    logging.error("Something generic went wrong. Exiting program")
+    logger.error("Something generic went wrong. Exiting program")
     sys.exit(1)
-logging.debug("Controller set up correctly, ep: %s", ep)
+logger.debug("Controller set up correctly, ep: %s", ep)
 
 # write the data
 # ep.write(codecs.decode("040100000000000102ffffff00000000", "hex"))

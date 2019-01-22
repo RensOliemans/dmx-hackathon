@@ -2,16 +2,14 @@ from flask import Flask, render_template, redirect, session
 from flask import request, jsonify
 from flask_bootstrap import Bootstrap
 
-import log
 from Exceptions.Exceptions import InvalidRequestException, ControllerSetLEDException
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
 from controller import DMXController
 from controller_handler import ControllerHandler
 from secret import key as secret_key
+from log import logger
 
-logging = log.get_logger(__name__)
-
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.secret_key = secret_key
 bootstrap = Bootstrap(app)
 
@@ -37,8 +35,7 @@ def animate():
 def onoff():
     """Method used when toggling the lights with a color"""
     data = {x: request.form.get(x) for x in request.form}
-    current_color, status = HANDLER.onoff(data)
-    session['color_onoff'] = current_color.to_hex().lstrip('#')
+    status = HANDLER.onoff()
     session['status_onoff'] = status
     return redirect('/')
 
@@ -51,20 +48,23 @@ def index():
                                                                                 if key in session else ""
                                                                                 for key in keys]
 
-    logging.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_onoff}, {status_onoff}")
+    logger.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_onoff}, {status_onoff}")
     return render_template('index.html', color_animate=color_animate, duration_animate=duration_animate,
-                           ease_animate=ease_animate, color_onoff=color_onoff, status_onoff=status_onoff)
+                           ease_animate=ease_animate, color_onoff=color_animate, status_onoff=status_onoff)
 
 
 @app.errorhandler(InvalidRequestException)
-def handle_invalid_request(error):
+def handle_invalid_request(error: InvalidRequestException):
     """ Returns a neat response to an error. """
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
+    return render_template('errors/400.html', explanation=error.message), 400
 
 
 @app.errorhandler(ControllerSetLEDException)
-def handle_controller_set_led_exception(error):
+def handle_controller_set_led_exception(error: ControllerSetLEDException):
     """ Calls handle_invalid_request, as the same functionality is required. """
-    return handle_invalid_request(error)
+    return render_template('errors/500.html', explanation=error.message), 500
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('errors/404.html'), 404
