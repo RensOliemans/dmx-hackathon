@@ -13,10 +13,11 @@ start_color = Color(201, 117, 128)
 final_color = Color(193, 109, 120)
 default_duration = 300
 default_ease = 'linear'
-default_json = {'color': '#C9751C', 'duration': '15', 'ease': 'linear'}
+default_animate_json = {'color': '#C9751C', 'duration': '15', 'ease': 'linear'}
 default_animation = [Color(r=201, g=117, b=128), Color(r=200, g=116, b=127), Color(r=199, g=115, b=126),
                      Color(r=198, g=114, b=125), Color(r=197, g=113, b=124), Color(r=196, g=112, b=123),
                      Color(r=195, g=111, b=122), Color(r=194, g=110, b=121), Color(r=193, g=109, b=120)]
+default_toggle_json = {'color': '#C9751C'}
 
 
 def get_controller_mock():
@@ -466,7 +467,7 @@ def test_animate_calls_generate():
     handler.generate_animation = Mock(return_value=default_animation)
 
     # Act
-    handler.animate(default_json)
+    handler.animate(default_animate_json)
 
     # Assert
     handler.generate_animation.assert_called_once()
@@ -480,7 +481,7 @@ def test_animate_calls_play():
     handler.play_animation = Mock()
 
     # Act
-    handler.animate(default_json)
+    handler.animate(default_animate_json)
 
     # Assert
     handler.play_animation.assert_called_once()
@@ -493,7 +494,82 @@ def test_animate_current_color_set():
     handler.play_animation = Mock()
 
     # Act
-    handler.animate(default_json)
+    handler.animate(default_animate_json)
 
     # Assert
     assert handler.current_color == default_animation[-1]
+
+
+def test_onoff_setled_called():
+    # Arrange
+    handler, _ = get_handler()
+    handler.set_led = Mock()
+
+    # Act
+    handler.onoff(default_toggle_json)
+
+    # Assert
+    handler.set_led.assert_called_once()
+
+
+def test_onoff_currentcolor_set():
+    # Arrange
+    handler, _ = get_handler()
+    handler.set_led = Mock()
+
+    # Act
+    handler.onoff(default_toggle_json)
+
+    # Assert
+    assert handler.current_color == Color.to_rgb(default_toggle_json['color'])
+
+
+def test_onoff_wrong_request_type():
+    # Arrange
+    handler, _ = get_handler()
+    exception = None
+
+    # Act
+    try:
+        handler.onoff({'color': 'wrong'})
+    except InvalidRequestException as e:
+        exception = e
+
+    # Assert
+    assert exception is not None
+    assert type(exception) == InvalidRequestException
+    assert type(exception.inner_exception) == ValueError
+
+
+def test_onoff_wrong_request_content():
+    # Arrange
+    handler, _ = get_handler()
+    exception = None
+
+    # Act
+    try:
+        handler.onoff({'wrong': '#C9751C'})
+    except InvalidRequestException as e:
+        exception = e
+
+    # Assert
+    assert exception is not None
+    assert type(exception) == InvalidRequestException
+    assert type(exception.inner_exception) == KeyError
+
+
+def test_onoff_wrong_request_empty():
+    # Arrange
+    handler, _ = get_handler()
+    exception = None
+
+    # Act
+    try:
+        handler.onoff({'color': ''})
+    except InvalidRequestException as e:
+        exception = e
+
+    # Assert
+    assert exception is not None
+    assert type(exception) == InvalidRequestException
+    assert type(exception.inner_exception) == ValueError
