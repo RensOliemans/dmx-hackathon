@@ -1,17 +1,18 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, session
 from flask import request, jsonify
 from flask_bootstrap import Bootstrap
-from werkzeug.exceptions import BadRequestKeyError
 
 import log
 from Exceptions.Exceptions import InvalidRequestException, ControllerSetLEDException
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
 from controller import DMXController
 from controller_handler import ControllerHandler
+from secret import key
 
 logging = log.get_logger(__name__)
 
 app = Flask(__name__)
+app.secret_key = key
 bootstrap = Bootstrap(app)
 
 c = DMXController(CHANNELS, UPDATE_RATE_MS)
@@ -25,16 +26,18 @@ def animate():
     # Convert to dict (we don't need the multi levels)
     data = {x: request.form.get(x) for x in request.form}
     current_color, duration, ease = HANDLER.animate(data)
-    return redirect("/?color={0}&duration={1}&ease={2}"
-                    .format(current_color.to_hex().lstrip('#'), duration, ease),
-                    code=302)
+    session['color'] = current_color.to_hex().lstrip('#')
+    session['duration'] = duration
+    session['ease'] = ease
+    return redirect('/')
 
 
 @app.route('/', methods=['GET'])
 def index():
-    possible_fields = ['color', 'duration', 'ease']
-    if all([arg in request.args for arg in possible_fields]):
-        color, duration, ease = (request.args[arg] for arg in possible_fields)
+    keys = ['color', 'duration', 'ease']
+    if all([key in session for key in keys]):
+        color, duration, ease = (session.pop(key) for key in keys)
+        logging.debug(f"Got get request with session set, color={color}, duration={duration}, ease={ease}")
         return render_template('index.html', color=color, duration=duration, ease=ease)
     return render_template('index.html')
 
