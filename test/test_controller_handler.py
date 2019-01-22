@@ -146,12 +146,11 @@ def test_generate_animation_no_ease():
     # Act
     try:
         handler.generate_animation(start_color, final_color, default_duration, ease)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == TypeError
 
 
@@ -165,12 +164,11 @@ def test_generate_animation_wrong_ease():
     # Act
     try:
         handler.generate_animation(start_color, final_color, default_duration, ease)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == AttributeError
 
 
@@ -216,12 +214,11 @@ def test_set_led_raise_correct_exception():
     # Act
     try:
         handler.set_led(r, g, b)
-    except Exception as e:
+    except ControllerSetLEDException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == ControllerSetLEDException
     assert type(exception.inner_exception) == NameError
 
 
@@ -253,12 +250,11 @@ def test_animate_wrong_color():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == ValueError
 
 
@@ -271,12 +267,11 @@ def test_animate_wrong_color_hex():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == ValueError
 
 
@@ -289,12 +284,11 @@ def test_animate_wrong_color_type():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == AttributeError
 
 
@@ -307,12 +301,11 @@ def test_animate_wrong_color_none():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == AttributeError
 
 
@@ -325,12 +318,11 @@ def test_animate_wrong_duration_empty():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == ValueError
 
 
@@ -343,12 +335,11 @@ def test_animate_wrong_duration_none():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == TypeError
 
 
@@ -361,12 +352,11 @@ def test_animate_wrong_duration_type():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == ValueError
 
 
@@ -379,12 +369,11 @@ def test_animate_wrong_duration_missing():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == KeyError
 
 
@@ -397,12 +386,11 @@ def test_animate_wrong_ease_empty():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == AttributeError
 
 
@@ -415,12 +403,11 @@ def test_animate_wrong_ease_none():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == TypeError
 
 
@@ -433,12 +420,11 @@ def test_animate_wrong_ease_missing():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == KeyError
 
 
@@ -451,12 +437,11 @@ def test_animate_wrong_ease_text():
     # Act
     try:
         handler.animate(json)
-    except Exception as e:
+    except InvalidRequestException as e:
         exception = e
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == AttributeError
 
 
@@ -537,7 +522,6 @@ def test_onoff_wrong_request_type():
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == ValueError
 
 
@@ -554,7 +538,6 @@ def test_onoff_wrong_request_content():
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == KeyError
 
 
@@ -571,5 +554,4 @@ def test_onoff_wrong_request_empty():
 
     # Assert
     assert exception is not None
-    assert type(exception) == InvalidRequestException
     assert type(exception.inner_exception) == ValueError
