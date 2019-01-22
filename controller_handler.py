@@ -69,11 +69,13 @@ class ControllerHandler:
         status = 0
         if status:
             # Lights are already on, turn them off
-            self.controller.turn_off()
+            # self.controller.turn_off()
+            pass
         else:
             self.set_led(color.r, color.g, color.b)
 
         # return color, self.controller.get_status()
+        self.current_color = color
         return color, 1
 
     def play_animation(self, animation):
