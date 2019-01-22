@@ -67,4 +67,4 @@ def handle_controller_set_led_exception(error: ControllerSetLEDException):
 
 @app.errorhandler(404)
 def not_found(error):
-    return render_template('errors/new404.html'), 404
+    return render_template('errors/404.html'), 404
