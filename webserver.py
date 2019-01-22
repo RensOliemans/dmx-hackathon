@@ -1,17 +1,18 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, session
 from flask import request, jsonify
 from flask_bootstrap import Bootstrap
-from werkzeug.exceptions import BadRequestKeyError
 
 import log
 from Exceptions.Exceptions import InvalidRequestException, ControllerSetLEDException
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
 from controller import DMXController
 from controller_handler import ControllerHandler
+from secret import key as secret_key
 
 logging = log.get_logger(__name__)
 
 app = Flask(__name__)
+app.secret_key = secret_key
 bootstrap = Bootstrap(app)
 
 c = DMXController(CHANNELS, UPDATE_RATE_MS)
@@ -22,21 +23,37 @@ HANDLER = ControllerHandler(c)
 
 @app.route('/animate', methods=['POST'])
 def animate():
+    """Method used when making a light animation (fade to other color)"""
     # Convert to dict (we don't need the multi levels)
     data = {x: request.form.get(x) for x in request.form}
     current_color, duration, ease = HANDLER.animate(data)
-    return redirect("/?color={0}&duration={1}&ease={2}"
-                    .format(current_color.to_hex().lstrip('#'), duration, ease),
-                    code=302)
+    session['color_animate'] = current_color.to_hex().lstrip('#')
+    session['duration_animate'] = duration
+    session['ease_animate'] = ease
+    return redirect('/')
+
+
+@app.route('/onoff', methods=['POST'])
+def onoff():
+    """Method used when toggling the lights with a color"""
+    data = {x: request.form.get(x) for x in request.form}
+    current_color, status = HANDLER.onoff(data)
+    session['color_onoff'] = current_color.to_hex().lstrip('#')
+    session['status_onoff'] = status
+    return redirect('/')
 
 
 @app.route('/', methods=['GET'])
 def index():
-    possible_fields = ['color', 'duration', 'ease']
-    if all([arg in request.args for arg in possible_fields]):
-        color, duration, ease = (request.args[arg] for arg in possible_fields)
-        return render_template('index.html', color=color, duration=duration, ease=ease)
-    return render_template('index.html')
+    # All possible variables that can be given to the Jinja template.
+    keys = ['color_animate', 'duration_animate', 'ease_animate', 'color_onoff', 'status_onoff']
+    color_animate, duration_animate, ease_animate, color_onoff, status_onoff = [session.get(key)
+                                                                                if key in session else ""
+                                                                                for key in keys]
+
+    logging.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_onoff}, {status_onoff}")
+    return render_template('index.html', color_animate=color_animate, duration_animate=duration_animate,
+                           ease_animate=ease_animate, color_onoff=color_onoff, status_onoff=status_onoff)
 
 
 @app.errorhandler(InvalidRequestException)

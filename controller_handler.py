@@ -50,6 +50,32 @@ class ControllerHandler:
         self.current_color = animation[-1]
         return self.current_color, duration, ease
 
+    def onoff(self, request_json):
+        """
+        This method is called when the lights need to go on or off.
+        :param request_json: data gathered from the request
+        :return: Tuple: (current_color, status) with status being 1 or 0, after the switch has been done
+        """
+        logging.debug(f"Got request with data {request_json}")
+        try:
+            color = Color.to_rgb(request_json['color'])
+        except (KeyError, ValueError) as e:
+            logging.error(f"Request was incorrectly formatted. Was {request_json}")
+            raise InvalidRequestException("Request should have the Color. It was:"
+                                          f"{request_json}", inner_exception=e)
+
+        # TODO: implement when controller has functionality
+        # status = self.controller.get_status()
+        status = 0
+        if status:
+            # Lights are already on, turn them off
+            self.controller.turn_off()
+        else:
+            self.set_led(color.r, color.g, color.b)
+
+        # return color, self.controller.get_status()
+        return color, 1
+
     def play_animation(self, animation):
         for frame in animation:
             self.set_led(frame.r, frame.g, frame.b)
