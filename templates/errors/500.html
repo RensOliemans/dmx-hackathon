@@ -1,0 +1,13 @@
+{% extends'base.html' %}
+{% block title %}500 - Internal Server Error{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <p>Something went wrong on our side - try again, check your parameters,
+            check if the DMX controller is plugged in the Pi, or call Frank/Ollie<br><br>
+        {% if explanation %}
+            Error explanation: <b>{{ explanation }}</b>
+        {% endif %}
+        </p>
+    </div>
+{% endblock %}

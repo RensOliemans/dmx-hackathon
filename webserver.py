@@ -55,14 +55,17 @@ def index():
 
 
 @app.errorhandler(InvalidRequestException)
-def handle_invalid_request(error):
+def handle_invalid_request(error: InvalidRequestException):
     """ Returns a neat response to an error. """
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
+    return render_template('errors/400.html', explanation=error.message), 400
 
 
 @app.errorhandler(ControllerSetLEDException)
-def handle_controller_set_led_exception(error):
+def handle_controller_set_led_exception(error: ControllerSetLEDException):
     """ Calls handle_invalid_request, as the same functionality is required. """
-    return handle_invalid_request(error)
+    return render_template('errors/500.html', explanation=error.message), 500
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('errors/404.html'), 404

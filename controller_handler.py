@@ -29,19 +29,19 @@ class ControllerHandler:
         :param request_json: data which is gathered from the request
         :return: the final current_color, duration and ease
         """
-        logger.debug("Got request with data %s", request_json)
+        logger.debug(f"Got request with data {request_json}")
         try:
             color = Color.to_rgb(request_json['color'])
             duration = int(request_json['duration'])
             ease = request_json['ease']
         except (TypeError, KeyError, ValueError, AttributeError) as e:
-            logger.error("Request was incorrectly formatted. Was %s", request_json)
+            logger.error(f"Request was incorrectly formatted. Was {request_json}")
             raise InvalidRequestException('request should have the Color, Duration and Ease. It was:'
                                           '{req_json}'.format(req_json=request_json), inner_exception=e)
 
         animation = self.generate_animation(self.current_color, color,
                                             duration, ease)
-        logger.debug("Generated animation: %s", animation)
+        logger.debug(f"Generated animation: {animation}" )
 
         self.play_animation(animation)
 
@@ -107,7 +107,7 @@ class ControllerHandler:
         try:
             tween = getattr(pytweening, ease)
         except (TypeError, AttributeError) as e:
-            logger.error("PyTweening couldn't understand the 'ease' function. Passed ease: %s", ease)
+            logger.error(f"PyTweening couldn't understand the 'ease' function. Passed ease: {ease}")
             # The 'ease' wasn't a string, or wasn't understood by PyTweening
             raise InvalidRequestException('"ease" was not a valid PyTweening ease', inner_exception=e)
 

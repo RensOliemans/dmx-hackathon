@@ -1,0 +1,12 @@
+{% extends'base.html' %}
+{% block title %}404 - Page Not Found{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <p>404 error, are you sure that this page exists?<br><br>
+        {% if explanation %}
+            Error explanation: <b>{{ explanation }}</b>
+        {% endif %}
+        </p>
+    </div>
+{% endblock %}

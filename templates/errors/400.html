@@ -1,0 +1,12 @@
+{% extends'base.html' %}
+{% block title %}400 - Invalid Request{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <p>Oops, it looks like you passed a wrong request type, try again.<br><br>
+        {% if explanation %}
+            Error explanation: <b>{{ explanation }}</b>
+        {% endif %}
+        </p>
+    </div>
+{% endblock %}
