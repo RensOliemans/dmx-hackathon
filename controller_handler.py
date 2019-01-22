@@ -49,20 +49,11 @@ class ControllerHandler:
         self.current_color = animation[-1]
         return self.current_color, duration, ease
 
-    def onoff(self, request_json):
+    def onoff(self):
         """
         This method is called when the lights need to go on or off.
-        :param request_json: data gathered from the request
-        :return: Tuple: (current_color, status) with status being 1 or 0, after the switch has been done
+        :return: status being 1 or 0, after the switch has been done
         """
-        logger.debug(f"Got request with data {request_json}")
-        try:
-            color = Color.to_rgb(request_json['color'])
-        except (KeyError, ValueError) as e:
-            logger.error(f"Request was incorrectly formatted. Was {request_json}")
-            raise InvalidRequestException("Request should have the Color. It was:"
-                                          f"{request_json}", inner_exception=e)
-
         # TODO: implement when controller has functionality
         # status = self.controller.get_status()
         status = 0
@@ -71,12 +62,11 @@ class ControllerHandler:
             # self.controller.turn_off()
             pass
         else:
-            self.set_led(color.r, color.g, color.b)
+            self.set_led(self.current_color.r, self.current_color.g, self.current_color.b)
 
         # return color, self.controller.get_status()
-        self.current_color = color
         status = random.choice((0, 1))
-        return color, ('On' if status else 'Off')
+        return 'On' if status else 'Off'
 
     def play_animation(self, animation):
         for frame in animation:
@@ -88,7 +78,7 @@ class ControllerHandler:
             self.controller.send_start(0, [r, g, b, 0, 0, 0])
             self.controller.make_frame()
             self.controller.make_frame()
-        except NameError as e:
+        except (NameError, OverflowError) as e:
             logger.error("Is the controller initialised correctly?")
             raise ControllerSetLEDException('Controller set LED went wrong', inner_exception=e)
 

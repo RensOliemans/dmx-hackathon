@@ -35,8 +35,7 @@ def animate():
 def onoff():
     """Method used when toggling the lights with a color"""
     data = {x: request.form.get(x) for x in request.form}
-    current_color, status = HANDLER.onoff(data)
-    session['color_onoff'] = current_color.to_hex().lstrip('#')
+    status = HANDLER.onoff()
     session['status_onoff'] = status
     return redirect('/')
 
@@ -51,7 +50,7 @@ def index():
 
     logger.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_onoff}, {status_onoff}")
     return render_template('index.html', color_animate=color_animate, duration_animate=duration_animate,
-                           ease_animate=ease_animate, color_onoff=color_onoff, status_onoff=status_onoff)
+                           ease_animate=ease_animate, color_onoff=color_animate, status_onoff=status_onoff)
 
 
 @app.errorhandler(InvalidRequestException)
