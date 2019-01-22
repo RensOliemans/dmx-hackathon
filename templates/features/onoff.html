@@ -2,18 +2,8 @@
   <h1>On-Off</h1>
     <div class="row">
         <div class="col-md-4">
-        <p>The button is now {{ status_onoff }}</p>
             <form method="post" action="/onoff">
-                <div class="form-group">
-                <label for="color">Color (Hex)</label>
-                <input type="color" name="color" class="form-control" id="color" value=
-                        {% if color_onoff %}
-                          {{ "#" + color_onoff }}
-                        {% else %}
-                            "#c9751c"
-                        {% endif %}>
-                </div>
-                <button type="submit" class="btn btn-primary">Toggle</button>
+                <button type="submit" class="btn btn-primary">{{ status_onoff }}</button>
             </form>
         </div>
     </div>
