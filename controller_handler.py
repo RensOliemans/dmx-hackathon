@@ -1,4 +1,5 @@
 import time
+import random
 
 import pytweening
 from numpy import linspace
@@ -76,7 +77,8 @@ class ControllerHandler:
 
         # return color, self.controller.get_status()
         self.current_color = color
-        return color, 1
+        status = random.choice((0, 1))
+        return color, ('On' if status else 'Off')
 
     def play_animation(self, animation):
         for frame in animation:
