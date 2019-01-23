@@ -1,5 +1,11 @@
+"""Module containing custom defined exceptions"""
+
+
 class InvalidRequestException(Exception):
-    """Exception thrown when an invalid request is done. Usually when 'ease' is invalid, or the color isn't good"""
+    """
+    Exception thrown when an invalid request is done. Usually when 'ease' is invalid,
+    or the color isn't good
+    """
     status_code = 400
 
     def __init__(self, message, inner_exception=None, status_code=None):
@@ -11,7 +17,9 @@ class InvalidRequestException(Exception):
 
 
 class ControllerSetLEDException(Exception):
-    """Exception thrown when SetLED goes wrong. Often when there is no DMX controller plugged to the Pi"""
+    """
+    Exception thrown when SetLED goes wrong. Often when there is no DMX controller plugged to the Pi
+    """
     status_code = 500
 
     def __init__(self, message, inner_exception=None, status_code=None):

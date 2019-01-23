@@ -1,22 +1,24 @@
-from flask import Flask, render_template, redirect, session
-from flask import request, jsonify
+"""
+Flask webserver file. Handles incoming GET and POST requests and calls the ControllerHandler.
+"""
+from flask import Flask, render_template, redirect, session, request
 from flask_bootstrap import Bootstrap
 
-from Exceptions.Exceptions import InvalidRequestException, ControllerSetLEDException
-from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL
+from exceptions.exceptions import InvalidRequestException, ControllerSetLEDException
+from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL, secret_key
 from controller import DMXController
 from controller_handler import ControllerHandler
-from secret import key as secret_key
 from log import logger
 
+# pylint: disable=C0103
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = secret_key
-bootstrap = Bootstrap(app)
+BOOTSTRAP = Bootstrap(app)
 
-c = DMXController(CHANNELS, UPDATE_RATE_MS)
-c.set_channel(INIT_CHANNEL, INIT_CHANNEL_VALUE)
+CONTROLLER = DMXController(CHANNELS, UPDATE_RATE_MS)
+CONTROLLER.set_channel(INIT_CHANNEL, INIT_CHANNEL_VALUE)
 
-HANDLER = ControllerHandler(c)
+HANDLER = ControllerHandler(CONTROLLER)
 
 
 @app.route('/animate', methods=['POST'])
@@ -41,17 +43,21 @@ def toggle():
 
 @app.route('/', methods=['GET'])
 def index():
+    """Method used when user goes to the homepage"""
     # All possible variables that can be given to the Jinja template.
     keys = ['color_animate', 'duration_animate', 'ease_animate', 'color_toggle', 'status_toggle']
     color_animate, duration_animate, ease_animate, color_toggle, status_toggle = [session.get(key)
-                                                                                  if key in session else ""
+                                                                                  if key in session
+                                                                                  else ""
                                                                                   for key in keys]
     # If someone without a previous session goes to /, there is no status_toggle
     status_toggle = status_toggle or 'Click'
 
-    logger.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_toggle}, {status_toggle}")
-    return render_template('index.html', color_animate=color_animate, duration_animate=duration_animate,
-                           ease_animate=ease_animate, color_toggle=color_animate, status_toggle=status_toggle)
+    logger.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate},"
+                 f"{color_toggle}, {status_toggle}")
+    return render_template('index.html', color_animate=color_animate,
+                           duration_animate=duration_animate, ease_animate=ease_animate,
+                           color_toggle=color_animate, status_toggle=status_toggle)
 
 
 @app.errorhandler(InvalidRequestException)
@@ -68,4 +74,5 @@ def handle_controller_set_led_exception(error: ControllerSetLEDException):
 
 @app.errorhandler(404)
 def not_found(_):
+    """Return custom 404 page"""
     return render_template('errors/404.html'), 404
