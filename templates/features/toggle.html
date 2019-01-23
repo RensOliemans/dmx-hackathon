@@ -1,0 +1,13 @@
+<div class="container-fluid">
+  <h1>On-Off</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <form method="post" action="/toggle">
+                <button type="submit" class="btn btn-primary">{{ status_toggle }}</button>
+                {% if status_toggle == 'On' %}
+                    <i class="far fa-lightbulb" style="float:right;font-size:60px;"></i>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>

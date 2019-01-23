@@ -49,7 +49,7 @@ class ControllerHandler:
         self.current_color = animation[-1]
         return self.current_color, duration, ease
 
-    def onoff(self):
+    def toggle(self):
         """
         This method is called when the lights need to go on or off.
         :return: status being 1 or 0, after the switch has been done

@@ -491,7 +491,7 @@ def test_onoff_setled_called():
     handler.set_led = Mock()
 
     # Act
-    handler.onoff()
+    handler.toggle()
 
     # Assert
     handler.set_led.assert_called_once()

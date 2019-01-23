@@ -31,26 +31,27 @@ def animate():
     return redirect('/')
 
 
-@app.route('/onoff', methods=['POST'])
-def onoff():
+@app.route('/toggle', methods=['POST'])
+def toggle():
     """Method used when toggling the lights with a color"""
-    data = {x: request.form.get(x) for x in request.form}
-    status = HANDLER.onoff()
-    session['status_onoff'] = status
+    status = HANDLER.toggle()
+    session['status_toggle'] = status
     return redirect('/')
 
 
 @app.route('/', methods=['GET'])
 def index():
     # All possible variables that can be given to the Jinja template.
-    keys = ['color_animate', 'duration_animate', 'ease_animate', 'color_onoff', 'status_onoff']
-    color_animate, duration_animate, ease_animate, color_onoff, status_onoff = [session.get(key)
-                                                                                if key in session else ""
-                                                                                for key in keys]
+    keys = ['color_animate', 'duration_animate', 'ease_animate', 'color_toggle', 'status_toggle']
+    color_animate, duration_animate, ease_animate, color_toggle, status_toggle = [session.get(key)
+                                                                                  if key in session else ""
+                                                                                  for key in keys]
+    # If someone without a previous session goes to /, there is no status_toggle
+    status_toggle = status_toggle or 'Click'
 
-    logger.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_onoff}, {status_onoff}")
+    logger.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate}, {color_toggle}, {status_toggle}")
     return render_template('index.html', color_animate=color_animate, duration_animate=duration_animate,
-                           ease_animate=ease_animate, color_onoff=color_animate, status_onoff=status_onoff)
+                           ease_animate=ease_animate, color_toggle=color_animate, status_toggle=status_toggle)
 
 
 @app.errorhandler(InvalidRequestException)
@@ -66,5 +67,5 @@ def handle_controller_set_led_exception(error: ControllerSetLEDException):
 
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found(_):
     return render_template('errors/404.html'), 404
