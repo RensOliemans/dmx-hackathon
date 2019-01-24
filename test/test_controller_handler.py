@@ -22,6 +22,7 @@ DEFAULT_ANIMATION = [Color(r=201, g=117, b=128), Color(r=200, g=116, b=127),
                      Color(r=193, g=109, b=120)]
 DEFAULT_TOGGLE_JSON = {'color': '#C9751C'}
 
+
 def get_controller_mock():
     """Default method to get a controller with all methods mocked"""
     controller_mock = DMXController(1, 10)
@@ -214,7 +215,6 @@ def test_set_led_raise_correct_exception():
     """ if make_frame raise a NameError, set_led should raise a ControllerSetLEDException """
     # Arrange
     handler, controller = get_handler()
-    r, g, b = START_COLOR.r, START_COLOR.g, START_COLOR.b
     controller.make_frame = Mock(side_effect=NameError('foo'))
     exception = None
 
