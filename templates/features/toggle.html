@@ -3,10 +3,10 @@
     <div class="row">
         <div class="col-md-8">
             <form method="post" action="/toggle">
-                <button type="submit" class="btn btn-primary">{{ status_toggle }}</button>
-                {% if status_toggle == 'On' %}
-                    <i class="far fa-lightbulb" style="float:right;font-size:32px;"></i>
-                {% endif %}
+                <button class="mdc-button mdc-button--outlined">
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">highlight</i>
+                    <span class="mdc-button__label">{{ status_toggle }}</span>
+                </button>
             </form>
         </div>
     </div>

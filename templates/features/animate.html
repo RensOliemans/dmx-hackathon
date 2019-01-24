@@ -31,6 +31,23 @@
                         <option {% if ease_animate == "easeInElastic" %}selected="selected" {% endif %}value="easeInElastic">easeInElastic</option>
                         <option {% if ease_animate == "easeInCirc" %}selected="selected" {% endif %}value="easeInCirc">easeInCirc</option>
                       </select>
+                <div class="mdc-select">
+                  <i class="mdc-select__dropdown-icon"></i>
+                  <select class="mdc-select__native-control">
+                    <option value="" disabled selected></option>
+                    <option value="linear">
+                      linear
+                    </option>
+                    <option value="easeInQuad">
+                      easeInQuad
+                    </option>
+                    <option value="easeInExpo">
+                      easeInExpo
+                    </option>
+                  </select>
+                  <label class="mdc-floating-label">Pick a Food Group</label>
+                  <div class="mdc-line-ripple"></div>
+                </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
