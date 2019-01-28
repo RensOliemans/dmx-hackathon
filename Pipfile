@@ -15,6 +15,7 @@ numpy = "*"
 flask-bootstrap = "*"
 pytest = "*"
 loguru = "*"
+flask-assets = "*"
 
 [requires]
 python_version = "3.7"

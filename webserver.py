@@ -3,6 +3,7 @@ Flask webserver file. Handles incoming GET and POST requests and calls the Contr
 """
 from flask import Flask, render_template, redirect, session, request
 from flask_bootstrap import Bootstrap
+from flask_assets import Environment, Bundle
 
 from exceptions.exceptions import InvalidRequestException, ControllerSetLEDException
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL, secret_key
