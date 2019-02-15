@@ -39,14 +39,11 @@ class DMX_controller:
 
     def make_frame(self):
         cnt = 0
-        tmp = [0]*512
-        zeros = 0
-        for i in range(512):
-            tmp[i] = self.frame[i]-self.prev_frame[i] 
+        tmp = self.frame
         while(cnt<511):
             zeros = self.zeros_after_packet(tmp,cnt)
             if cnt == 0:
-                #print("send start chn:"+str(zeros+1))
+                print("send start chn:"+str(zeros+1))
                 self.send_start(zeros,self.frame[zeros:zeros+6])
                 cnt = 6 + zeros
             elif cnt > 511:
@@ -54,23 +51,23 @@ class DMX_controller:
             else:
                 if cnt > 504:
                     if (512 - cnt) == 7:
-                        #print("send data ch :"+str(cnt+1))
+                        print("send data ch :"+str(cnt+1))
                         self.send_data(self.frame[cnt:cnt+7])
                         cnt += 7
                     else:
-                        #print("send single ch:"+str(cnt+1))
+                        print("send single ch:"+str(cnt+1))
                         self.send_single(self.frame[cnt])
                         cnt += 1
                 else:
                     if zeros > 0:
-                        #print("send skip ch:" + str(cnt+zeros+1))
+                        print("send skip ch:" + str(cnt+zeros+1))
                         self.send_data_skip(zeros, self.frame[cnt+zeros:cnt+zeros+6])
                         cnt += zeros + 6
                     else:
-                        #print("send data ch:"+str(cnt+1))
+                        print("send data ch:"+str(cnt+1))
                         self.send_data(self.frame[cnt:cnt+7])
                         cnt += 7
-        
+
 
     def zeros_after_packet(self,data,start):
         cnt = 0
@@ -109,28 +106,19 @@ class DMX_controller:
         dev.write(1,tmp)
             
    
-dmx = DMX_controller(100)
-'''
-for z in range(1):
-    dmx.send_start(0,[0,0,0,0,0,0])
-    for i in range (71):
-        dmx.send_data([0,0,0,0,0,0,0])
-    dmx.send_data([0,0,20+z*20,0,0,0,0])
-    dmx.send_single(0)
-'''
+dmx = DMX_controller(0)
+
 
 lamp1 = RGBLamp(508, dmx)
 lamp2 = RGBLamp(129,dmx)
 
-lamp2.change_color(0,0,255,False)
-cnt = 255
-for i in range(255):
+lamp2.change_color(0,255,0,False)
+lamp1.change_color(255,69,0,False)
+lamp1.change_color(255,69,0,False)
 
-    lamp1.change_color(i,cnt,100, True)
-    cnt -= 1
 
-'''
-for i in range(500):
-    dmx.send_start(254,[0,255,255,0,0,0])
-    dmx.send_data_skip(245,[0,0,0,0,0,0])
-'''
+
+
+
+
+
