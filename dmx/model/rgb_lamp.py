@@ -7,12 +7,13 @@ class RGBLamp(Fixture):
         self.__channel = channel
         self.__dmx_controller = dmx_controller
 
-    def change_color(self, r, g, b):
+    def change_color(self, r, g, b, animated):
         self.__dmx_controller.set_channel(self.__channel, r)
         self.__dmx_controller.set_channel(self.__channel + 1, g)
         self.__dmx_controller.set_channel(self.__channel + 2, b)
         self.__dmx_controller.make_frame()
-        self.__dmx_controller.make_frame()
+        if not animated:
+            self.__dmx_controller.make_frame()
 
     def shutdown(self):
         self.__dmx_controller.set_channel(self.__channel, 0)
