@@ -70,7 +70,7 @@ class DMX_controller:
                         #print("send data ch:"+str(cnt+1))
                         self.send_data(self.frame[cnt:cnt+7])
                         cnt += 7
-        self.prev_frame= self.frame.copy()
+        
 
     def zeros_after_packet(self,data,start):
         cnt = 0
