@@ -12,6 +12,10 @@ flask = "*"
 pyusb = "*"
 pytweening = "*"
 numpy = "*"
+flask-bootstrap = "*"
+pytest = "*"
+loguru = "*"
+flask-assets = "*"
 
 [requires]
-python_version = "3.5"
+python_version = "3.7"
