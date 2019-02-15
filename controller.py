@@ -1,7 +1,7 @@
 import usb
 import codecs
-
-
+import random
+import time
 # find our device
 dev = usb.core.find(idVendor=0x10cf, idProduct=0x8062)
 
@@ -15,69 +15,117 @@ try:
 except usb.core.USBError as e:
     sys.exit("Kernel driver won't give up control over device: %s" % str(e))
 
-try:
-    dev.set_configuration()
-    dev.reset()
-except usb.core.USBError as e:
-    sys.exit("Cannot set configuration the device: %s" % str(e))
+dev.set_configuration()
 
-
-# get an endpoint instance
-cfg = dev.get_active_configuration()
-intf = cfg[(0, 0)]
-
-ep = usb.util.find_descriptor(
-    intf,
-    # match the first OUT endpoint
-    custom_match=lambda e: \
-    usb.util.endpoint_direction(e.bEndpointAddress) == \
-    usb.util.ENDPOINT_OUT)
-
-assert ep is not None
-
-# write the data
-#ep.write(codecs.decode("040100000000000102ffffff00000000", "hex"))
 
 
 class DMX_controller:
-    __frame_string = ""
 
-    def __init__(self, channels, update_rate_ms):
-        if channels <= 512:
-            self.channels = channels
-        if update_rate_ms >= 25:
-            self.update_rate_ms = update_rate_ms
-        self.frame = [0] * channels
-        self.cur_frame = [0] * channels
+    def __init__(self, update_rate_ms):
+        self.update_rate_ms = update_rate_ms
+        self.frame = [0] * 512
+        self.prev_frame = [0]* 512 
 
     def set_channel(self, channel, value):
         self.frame[channel-1] = value  # -1 because dmx starts at channel 1
 
     def make_frame(self):
-        ep.write(self.__frame_string)
+        cnt = 0
+        tmp = [0]*512
+        zeros = 0
+        for i in range(512):
+            tmp[i] = self.frame[i]-self.prev_frame[i] 
+        while(cnt<=511):
+            zeros = self.zeros_after_packet(tmp,cnt)
+            if cnt == 0:
+                print("send start chn:"+str(zeros+1))
+                self.send_start(zeros,self.frame[zeros:zeros+6])
+                cnt = 6 + zeros
+            elif cnt > 511:
+                break
+            else:
+                if cnt > 504:
+                    if (512 - cnt) == 7:
+                        print("send data ch :"+str(cnt+1))
+                        self.send_data(self.frame[cnt:cnt+7])
+                        cnt += 7
+                    else:
+                        print("send single ch:"+str(cnt+1))
+                        self.send_single(self.frame[cnt])
+                        cnt += 1
+                else:
+                    if zeros > 0:
+                        print("send skip ch:" + str(cnt+zeros+1))
+                        self.send_data_skip(zeros, self.frame[cnt+zeros:cnt+zeros+6])
+                        cnt += zeros + 6
+                    else:
+                        print("send data ch:"+str(cnt+1))
+                        self.send_data(self.frame[cnt:cnt+7])
+                        cnt += 7
 
+
+    def zeros_after_packet(self,data,start):
+        cnt = 0
+        for i in data[start:]:
+            if i==0:
+                cnt += 1
+            else:
+                break
+        if(start+cnt+6)<511:
+            if cnt < 255:
+
+                return cnt
+            else:
+                return 254
+        else:
+            return 0
     def send_start(self, skip, data_array):
-        self.__frame_string = (4).to_bytes(1, byteorder='big')
-        self.__frame_string += (skip+1).to_bytes(1, byteorder='big')
+        tmp = (4).to_bytes(1, byteorder='big')
+        tmp += (skip+1).to_bytes(1, byteorder='big')
         for i in data_array:
-            self.__frame_string += (i).to_bytes(1, byteorder='big')
-
+            tmp += (i).to_bytes(1, byteorder='big')
+        dev.write(1,tmp)
     def send_data(self, data_array):
-        return
-
+        tmp = (2).to_bytes(1, byteorder ='big')
+        for i in data_array:
+            tmp += (i).to_bytes(1, byteorder='big')
+        dev.write(1,tmp)
     def send_single(self, data):
-        return
-
+        tmp = (3).to_bytes(1, byteorder = 'big')
+        tmp += (data).to_bytes(1, byteorder ='big')
+        tmp += (0).to_bytes(6, byteorder = 'big')
+        dev.write(1,tmp)
     def send_data_skip(self, skip, data_array):
-        pass
-
-
+        tmp = (5).to_bytes(1, byteorder = 'big')
+        tmp += (skip).to_bytes(1, byteorder = 'big')
+        for i in data_array:
+            tmp += (i).to_bytes(1, byteorder = 'big')
+        dev.write(1,tmp)
+            
+   
+dmx = DMX_controller(100)
 '''
-def set_led(red, green, blue):
-    tmp = ""
-    tmp = red+green+blue
-    ep.write(codecs.decode("0401"+tmp+"000000","hex"))
+for z in range(1):
+    dmx.send_start(0,[0,0,0,0,0,0])
+    for i in range (71):
+        dmx.send_data([0,0,0,0,0,0,0])
+    dmx.send_data([0,0,20+z*20,0,0,0,0])
+    dmx.send_single(0)
+'''
 
+dmx.set_channel(129,255)
+dmx.set_channel(130,255)
+dmx.set_channel(131,255)
 
-def set_channel(channel, value)
+dmx.set_channel(480,255)
+dmx.set_channel(481,255)
+dmx.set_channel(482,255)
+
+dmx.set_channel(485,10)
+dmx.make_frame()
+dmx.make_frame()
+'''
+for i in range(500):
+    dmx.send_start(254,[0,255,255,0,0,0])
+    dmx.send_data_skip(245,[0,0,0,0,0,0])
 '''
