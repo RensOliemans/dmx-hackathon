@@ -53,8 +53,8 @@ def index():
     # If someone without a previous session goes to /, there is no status_toggle
     status_toggle = status_toggle or 'Click'
 
-    logger.debug(f"Request data: {color_animate}, {duration_animate}, {ease_animate},"
-                 f"{color_toggle}, {status_toggle}")
+    logger.debug("Request data: {}, {}, {},".format(color_animate, duration_animate, ease_animate) +
+                 "{}, {}".format(color_toggle, status_toggle))
     return render_template('index.html', color_animate=color_animate,
                            duration_animate=duration_animate, ease_animate=ease_animate,
                            color_toggle=color_animate, status_toggle=status_toggle)

@@ -32,19 +32,19 @@ class ControllerHandler:
         :param request_json: data which is gathered from the request
         :return: the final current_color, duration and ease
         """
-        logger.debug(f"Got request with data {request_json}")
+        logger.debug("Got request with data {}".format(request_json))
         try:
             color = Color.to_rgb(request_json['color'])
             duration = int(request_json['duration'])
             ease = request_json['ease']
         except (TypeError, KeyError, ValueError, AttributeError) as exception:
-            logger.error(f"Request was incorrectly formatted. Was {request_json}")
+            logger.error("Request was incorrectly formatted. Was {}".format(request_json))
             raise InvalidRequestException(f'request should have the Color, Duration and Ease.'
                                           f'It was{request_json}', inner_exception=exception)
 
         animation = self.generate_animation(self.current_color, color,
                                             duration, ease)
-        logger.debug(f"Generated animation: {animation}")
+        logger.debug("Generated animation: {}".format(animation))
 
         self.play_animation(animation)
 
