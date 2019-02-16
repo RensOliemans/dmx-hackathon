@@ -23,7 +23,7 @@ class ControllerHandler:
 
     def __init__(self, controller, current_color=Color(255, 60, 0)):
         self.controller = controller
-        self.current_color: Color = current_color
+        self.current_color = current_color
         self.lamp1 = RGBLamp(1, controller)
 
     def animate(self, request_json):
