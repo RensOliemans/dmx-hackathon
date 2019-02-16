@@ -9,21 +9,21 @@ from log import logger
 from dmx.model.rgb_lamp import RGBLamp
 
 # find our device
-# dev = usb.core.find(idVendor=0x10cf, idProduct=0x8062)
-#
-# # was it found?
-# if dev is None:
-#     logger.error('Device not found')
-#     raise ValueError('Device not found')
-#
-# try:
-#     if dev.is_kernel_driver_active(0) is True:
-#         dev.detach_kernel_driver(0)
-# except usb.core.USBError as e:
-#     logger.error("Kernel driver won't give up control over device: %s", str(e))
-#     sys.exit("Kernel driver won't give up control over device: %s" % str(e))
-#
-# dev.set_configuration()
+dev = usb.core.find(idVendor=0x10cf, idProduct=0x8062)
+
+# was it found?
+if dev is None:
+    logger.error('Device not found')
+    raise ValueError('Device not found')
+
+try:
+    if dev.is_kernel_driver_active(0) is True:
+        dev.detach_kernel_driver(0)
+except usb.core.USBError as e:
+    logger.error("Kernel driver won't give up control over device: %s", str(e))
+    sys.exit("Kernel driver won't give up control over device: %s" % str(e))
+
+dev.set_configuration()
 
 
 
