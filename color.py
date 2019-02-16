@@ -1,15 +1,14 @@
 """
 Module containing the Color dataclass
 """
-from dataclasses import dataclass
 
 
-@dataclass
 class Color:
     """Color object, having r, g, b, and a to_hex method."""
-    r: int = 0
-    g: int = 0
-    b: int = 0
+    def __init__(self, r, g, b):
+        self.r = r
+        self.g = g
+        self.b = b
 
     def to_hex(self):
         """Converts this object to a hex representation"""
