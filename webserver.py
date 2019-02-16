@@ -5,8 +5,8 @@ from flask import Flask, render_template, redirect, session, request
 from flask_bootstrap import Bootstrap
 
 from exceptions.exceptions import InvalidRequestException, ControllerSetLEDException
-from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL, secret_key
-from controller import DMXController
+from config import UPDATE_RATE_MS, INIT_CHANNEL_VALUE, INIT_CHANNEL, secret_key
+from controller import DMX_controller
 from controller_handler import ControllerHandler
 from log import logger
 
@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.secret_key = secret_key
 BOOTSTRAP = Bootstrap(app)
 
-CONTROLLER = DMXController(CHANNELS, UPDATE_RATE_MS)
+CONTROLLER = DMX_controller(UPDATE_RATE_MS)
 CONTROLLER.set_channel(INIT_CHANNEL, INIT_CHANNEL_VALUE)
 
 HANDLER = ControllerHandler(CONTROLLER)

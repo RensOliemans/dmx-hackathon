@@ -13,7 +13,7 @@ class Color:
 
     def to_hex(self):
         """Converts this object to a hex representation"""
-        return f"#{self.r:02X}{self.g:02X}{self.b:02X}"
+        return "#{:02X}{:02X}{:02X}".format(self.r, self.g, self.b)
 
     @staticmethod
     def to_rgb(hex_code: str):
