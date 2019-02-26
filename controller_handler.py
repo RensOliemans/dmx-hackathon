@@ -21,7 +21,7 @@ class ControllerHandler:
     Handler class; used by the webserver, contains bits of controller functionality
     """
 
-    def __init__(self, controller, current_color=Color(255, 60, 0)):
+    def __init__(self, controller, current_color=Color(0, 0, 0)):
         self.controller = controller
         self.current_color = current_color
         self.lamp1 = RGBLamp(1, controller)

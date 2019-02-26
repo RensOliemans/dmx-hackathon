@@ -105,18 +105,9 @@ class DMX_controller:
             tmp += (i).to_bytes(1, byteorder = 'big')
         dev.write(1,tmp)
             
-#
-dmx = DMX_controller(0)
-#
-#
-lamp1 = RGBLamp(508, dmx)
-lamp2 = RGBLamp(129,dmx)
-#
-lamp2.change_color(0,255,0,False)
-lamp1.change_color(255,69,0,False)
-lamp1.change_color(255,69,0,False)
-#
-#
+
+#dmx = DMX_controller(0)
+
 
 
 
