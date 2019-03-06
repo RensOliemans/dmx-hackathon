@@ -3,6 +3,7 @@ Flask webserver file. Handles incoming GET and POST requests and calls the Contr
 """
 from flask import Flask, render_template, redirect, session, request
 from flask_bootstrap import Bootstrap
+from usb.core import USBError
 
 from exceptions.exceptions import InvalidRequestException, ControllerSetLEDException
 from config import UPDATE_RATE_MS, CHANNELS, INIT_CHANNEL_VALUE, INIT_CHANNEL, secret_key
@@ -70,6 +71,11 @@ def handle_invalid_request(error: InvalidRequestException):
 def handle_controller_set_led_exception(error: ControllerSetLEDException):
     """ Calls handle_invalid_request, as the same functionality is required. """
     return render_template('errors/500.html', explanation=error.message), 500
+
+
+@app.errorhandler(USBError)
+def handle_usb_error(error):
+    return render_template('errors/500.html', explanation='usb error, remove the usb'), 500
 
 
 @app.errorhandler(404)
