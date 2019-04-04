@@ -1,22 +1,23 @@
 """
-Module containing the Color dataclass
+Module containing the Color class
 """
-from dataclasses import dataclass
-
-
-@dataclass
 class Color:
     """Color object, having r, g, b, and a to_hex method."""
-    r: int = 0
-    g: int = 0
-    b: int = 0
+    r = 0
+    g = 0
+    b = 0
+
+    def __init__(self, r, b, g):
+        self.r = r or 0
+        self.g = g or 0
+        self.b = b or 0
 
     def to_hex(self):
         """Converts this object to a hex representation"""
-        return f"#{self.r:02X}{self.g:02X}{self.b:02X}"
+        return "#{:02X}{:02X}{:02X}".format(self.r, self.g, self.b)
 
     @staticmethod
-    def to_rgb(hex_code: str):
+    def to_rgb(hex_code):
         """Converts a given hex code to a Color object with proper rgb values.
 
         :param: hex_code, color code in hex (with or without '#' to convert)
@@ -32,5 +33,8 @@ class Color:
 
     def __mul__(self, other):
         return Color(int(self.r * other), int(self.g * other), int(self.b * other))
+
+    def __eq__(self, other):
+        return self.r == other.r and self.g == other.g and self.b == other.b
 
     __rmul__ = __mul__
