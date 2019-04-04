@@ -16,14 +16,14 @@ try:
     if dev.is_kernel_driver_active(0) is True:
         dev.detach_kernel_driver(0)
 except usb.core.USBError as e:
-    logger.error("Kernel driver won't give up control over device: %s", str(e))
+    logger.error("Kernel driver won't give up control over device: %s" % str(e))
     sys.exit("Kernel driver won't give up control over device: %s" % str(e))
 
 try:
     dev.set_configuration()
     dev.reset()
 except usb.core.USBError as e:
-    logger.error("Cannot set configuration the device: %s", str(e))
+    logger.error("Cannot set configuration the device: %s" % str(e))
     sys.exit("Cannot set configuration the device: %s" % str(e))
 
 
@@ -41,7 +41,7 @@ ep = usb.util.find_descriptor(
 if ep is None:
     logger.error("Something generic went wrong. Exiting program")
     sys.exit(1)
-logger.debug("Controller set up correctly, ep: %s", ep)
+logger.debug("Controller set up correctly, ep: %s" % ep)
 
 # write the data
 # ep.write(codecs.decode("040100000000000102ffffff00000000", "hex"))

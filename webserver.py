@@ -28,6 +28,7 @@ def animate():
     # Convert to dict (we don't need the multi levels)
     data = {x: request.form.get(x) for x in request.form}
     current_color, duration, ease = HANDLER.animate(data)
+    logger.info("Handler did an animation, current_color: {}".format(current_color))
     session['color_animate'] = current_color.to_hex().lstrip('#')
     session['duration_animate'] = duration
     session['ease_animate'] = ease
@@ -66,17 +67,20 @@ def index():
 @app.errorhandler(InvalidRequestException)
 def handle_invalid_request(error: InvalidRequestException):
     """ Returns a neat response to an error. """
+    logger.error("InvalidRequestException, message: {}".format(error.message))
     return render_template('errors/400.html', explanation=error.message), 400
 
 
 @app.errorhandler(ControllerSetLEDException)
 def handle_controller_set_led_exception(error: ControllerSetLEDException):
     """ Calls handle_invalid_request, as the same functionality is required. """
+    logger.error("ControllerSetLEDException, message: {}".format(error.message))
     return render_template('errors/500.html', explanation=error.message), 500
 
 
 @app.errorhandler(USBError)
 def handle_usb_error(error):
+    logger.error("USBError")
     return render_template('errors/500.html', explanation='usb error, remove the usb'), 500
 
 

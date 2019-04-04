@@ -37,7 +37,7 @@ class ControllerHandler:
         except (TypeError, KeyError, ValueError, AttributeError) as exception:
             logger.error("Request was incorrectly formatted. Was {}".format(request_json))
             raise InvalidRequestException('request should have the Color, Duration and Ease.'
-                                          'It was {}'.format(request_json)
+                                          'It was {}'.format(request_json),
                                           inner_exception=exception)
 
         animation = self.generate_animation(self.current_color, color,
@@ -48,6 +48,7 @@ class ControllerHandler:
 
         # Last color of the animation is the 'final' color, so the current color of the controller
         self.current_color = animation[-1]
+        logger.info("current color (returning) is {}".format(self.current_color))
         return self.current_color, duration, ease
 
     def toggle(self):

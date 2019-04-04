@@ -7,7 +7,7 @@ class Color:
     g = 0
     b = 0
 
-    def __init__(self, r, b, g):
+    def __init__(self, r, g, b):
         self.r = r or 0
         self.g = g or 0
         self.b = b or 0
@@ -36,5 +36,8 @@ class Color:
 
     def __eq__(self, other):
         return self.r == other.r and self.g == other.g and self.b == other.b
+
+    def __str__(self):
+        return self.to_hex()
 
     __rmul__ = __mul__
