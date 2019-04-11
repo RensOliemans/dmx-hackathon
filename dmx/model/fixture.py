@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 class Fixture(ABC):
 
     @abstractmethod
-    def change_color(self, r, g, b):
+    def change_color(self, r, g, b, animated):
         raise NotImplementedError('subclasses must override change_color!')
 
     @abstractmethod
