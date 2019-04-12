@@ -13,6 +13,8 @@ from exceptions.exceptions import ControllerSetLEDException, InvalidRequestExcep
 from config import FPS
 from color import Color
 
+from dmx.model.rgb_lamp import RGBLamp
+
 
 class ControllerHandler:
     """
@@ -22,6 +24,7 @@ class ControllerHandler:
     def __init__(self, controller, current_color=Color(0, 0, 0)):
         self.controller = controller
         self.current_color = current_color
+        self.lamp1 = RGBLamp(1, controller)
 
     def animate(self, request_json):
         """
@@ -61,7 +64,7 @@ class ControllerHandler:
         status = 0
         if status:
             # Lights are already on, turn them off
-            # self.controller.turn_off()
+            self.lamp1.shutdown()
             pass
         else:
             self.set_led(self.current_color)
@@ -87,9 +90,8 @@ class ControllerHandler:
         :return: None
         """
         try:
-            self.controller.send_start(0, [color.r, color.g, color.b, 0, 0, 0])
-            self.controller.make_frame()
-            self.controller.make_frame()
+            # Instant color changes should not have animated=True since it results in undesired behaviour
+            self.lamp1.change_color(color.r, color.g, color.b, True)
         except (NameError, OverflowError) as exception:
             logger.error("Is the controller initialised correctly?")
             raise ControllerSetLEDException('Controller set LED went wrong',
@@ -110,8 +112,7 @@ class ControllerHandler:
         try:
             tween = getattr(pytweening, ease)
         except (TypeError, AttributeError) as exception:
-            logger.error("PyTweening couldn't understand the 'ease' function. Passed ease: {}"
-                    .format(ease))
+            logger.error("PyTweening couldn't understand the 'ease' function. Passed ease: {}".format(ease))
             # The 'ease' wasn't a string, or wasn't understood by PyTweening
             raise InvalidRequestException('"ease" was not a valid PyTweening ease',
                                           inner_exception=exception)
